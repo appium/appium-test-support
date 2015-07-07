@@ -1,6 +1,6 @@
 // transpile:mocha
 
-import { newLogStub } from '../..';
+import { newLogStub } from '..';
 import log from '../lib/logger';
 import sinon from 'sinon';
 import 'colors';

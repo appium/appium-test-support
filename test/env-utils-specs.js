@@ -1,6 +1,6 @@
 // transpile:mocha
 
-import {cloneEnv} from '../..';
+import {cloneEnv} from '..';
 import chai from 'chai';
 import 'mochawait';
 
