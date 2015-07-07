@@ -60,7 +60,7 @@ describe('myTest', () => {
 
 ### withSandbox
 
-Use when mixing mocks, spies stubs...
+Use when mixing up sinon apis (mocks, spies stubs).
 
 ```js
 import { withSandbox } from 'appium-test-support';
@@ -82,6 +82,8 @@ describe('MyTest', withSandbox({mocks: {api}}, (S) => {
 ```
 
 ### withMocks
+
+When using mainly stubs.
 
 ```js
 import { withMocks, verify } from 'appium-test-support';
