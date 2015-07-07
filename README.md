@@ -52,7 +52,7 @@ describe('myTest', () => {
 });
 ```
 
-### withSandBox
+### withSandbox
 
 Use when mixing mocks, spies stubs...
 
