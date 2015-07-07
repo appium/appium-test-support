@@ -1,5 +1,5 @@
-import { cloneEnv } from './lib/env-utils.js';
+import { stubEnv } from './lib/env-utils.js';
 import { stubLog } from './lib/log-utils.js';
 import { withSandbox, withMocks, verify } from './lib/sandox-utils.js';
 
-export { cloneEnv, stubLog, withSandbox, withMocks, verify };
+export { stubEnv, stubLog, withSandbox, withMocks, verify };

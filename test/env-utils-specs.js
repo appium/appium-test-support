@@ -1,6 +1,6 @@
 // transpile:mocha
 
-import {cloneEnv} from '..';
+import {stubEnv} from '..';
 import chai from 'chai';
 import 'mochawait';
 
@@ -8,8 +8,8 @@ chai.should();
 const expect = chai.expect;
 
 describe('env-utils', () => {
-  describe('cloneEnv', () => {
-    cloneEnv();
+  describe('stubEnv', () => {
+    stubEnv();
 
     it('setting env variable', () => {
       process.env.ABC = 'abc';

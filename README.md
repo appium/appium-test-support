@@ -8,13 +8,13 @@ A collection of test utility lib used across Appium packages.
 
 ## Api
 
-### cloneEnv
+### stubEnv
 
 ```js
-import { cloneEnv } from 'appium-test-support';
+import { stubEnv } from 'appium-test-support';
 
 describe('myTest', () => {
-  cloneEnv();
+  stubEnv();
   it('setting env variable', () => {
     // Changes to process.env will stay local
     process.env.ABC = 'abc';
