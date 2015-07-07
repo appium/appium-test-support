@@ -11,7 +11,7 @@ let funcs = {
   abc: () => { return 'abc'; }
 };
 
-describe.only('sandbox-utils', () => {
+describe('sandbox-utils', () => {
   describe('withSandbox', withSandbox({mocks: {funcs}}, (S) => {
     it('should create a sandbox and mocks', () => {
       expect(S.sandbox).to.exist;

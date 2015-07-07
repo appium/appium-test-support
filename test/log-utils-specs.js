@@ -13,10 +13,10 @@ chai.should();
 describe('log-utils', () => {
   describe('newLogStub', () => {
     let sandbox;
-    before(() => {
+    beforeEach(() => {
       sandbox = sinon.sandbox.create();
     });
-    after(() => {
+    afterEach(() => {
       sandbox.restore();
     });
     it('should stub log', () => {
