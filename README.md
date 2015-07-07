@@ -22,17 +22,17 @@ describe('myTest', () => {
 });
 ```
 
-### newLogStub
+### stubLog
 
 ```js
-import { newLogStub } from 'appium-test-support';
+import { stubLog } from 'appium-test-support';
 
 describe('myTest', () => {
   let sandbox;
   // configure sandbox here...
 
   it('stubbing log', () => {
-    let logStub = newLogStub(sandbox, log);
+    let logStub = stubLog(sandbox, log);
     log.info('Hello World!');
     log.warn(`The ${'sun'.yellow} is shining!`);
     logStub.output.should.equals([
@@ -41,7 +41,7 @@ describe('myTest', () => {
     ].join('\n'));
   });
   it('stubbing log stripping colors', () => {
-    let logStub = newLogStub(sandbox, log, {stripColors: true});
+    let logStub = stubLog(sandbox, log, {stripColors: true});
     log.info('Hello World!');
     log.warn(`The ${'sun'.yellow} is shining!`);
     logStub.output.should.equals([
