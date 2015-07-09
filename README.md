@@ -119,8 +119,7 @@ function doSomething() {
     let ret = '';
     function appendOneByOne () {
       if(ret.length >= 10) {
-        resolve(ret);
-        return;
+        return resolve(ret);
       }
       setTimeout(() => {
         ret = ret + ret.length;
