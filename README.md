@@ -109,6 +109,40 @@ describe('withMocks (+S)', withMocks({api}, (mocks, S) => {
 }));
 ```
 
+### fakeTime
+
+```js
+import { fakeTime } from 'appium-test-support';
+
+function doSomething() {
+  return new B.Promise((resolve) => {
+    let ret = '';
+    function appendOneByOne () {
+      if(ret.length >= 10) {
+        resolve(ret);
+        return;
+      }
+      setTimeout(() => {
+        ret = ret + ret.length;
+        appendOneByOne();
+      }, 1000);
+    }
+    appendOneByOne();
+  });
+}
+
+describe('fakeTime', () => {
+  let sandbox;
+  // create sandbox ...
+
+  it('should fake time', async () => {
+    let timeLord = fakeTime(sandbox);
+    let p = doSomething();
+    timeLord.speedup(200, 60); // interval=200, times=60
+    (await p).should.equals('0123456789');
+  });
+});
+```
 ## Watch
 
 ```
