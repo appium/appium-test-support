@@ -3,7 +3,6 @@
 import { fakeTime } from '..';
 
 import chai from 'chai';
-import 'mochawait';
 import sinon from 'sinon';
 import B from 'bluebird';
 

@@ -2,7 +2,7 @@
 
 import { withSandbox, withMocks, verify } from '..';
 import chai from 'chai';
-import 'mochawait';
+
 
 chai.should();
 const expect = chai.expect;

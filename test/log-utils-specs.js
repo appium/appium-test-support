@@ -6,7 +6,7 @@ import sinon from 'sinon';
 import 'colors';
 
 import chai from 'chai';
-import 'mochawait';
+
 
 chai.should();
 

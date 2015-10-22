@@ -2,7 +2,7 @@
 
 import {stubEnv} from '..';
 import chai from 'chai';
-import 'mochawait';
+
 
 chai.should();
 const expect = chai.expect;
