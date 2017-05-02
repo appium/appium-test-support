@@ -2,13 +2,12 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import request from 'request-promise';
 import path from 'path';
-import { tempDir, fs, zip } from 'appium-support';
+import { tempDir, fs } from 'appium-support';
 import { uploadZip, deleteZip } from '../../lib/s3';
-import sinon from 'sinon';
 import B from 'bluebird';
 
 const {openDir} = tempDir;
-const {readFile, writeFile, mkdir} = fs;
+const {writeFile, mkdir} = fs;
 
 chai.should();
 chai.use(chaiAsPromised);
