@@ -5,6 +5,7 @@ import path from 'path';
 import { tempDir, fs, zip } from 'appium-support';
 import { uploadZip, deleteZip } from '../../lib/s3';
 import sinon from 'sinon';
+import B from 'bluebird';
 
 const {openDir} = tempDir;
 const {readFile, writeFile, mkdir} = fs;
@@ -35,7 +36,8 @@ describe('S3', () => {
     await request(res.Location).should.eventually.be.resolved;
 
     // Delete the directory from S3 and verify that it was successfully deleted
-    await deleteZip(res.key);
+    await deleteZip(res.key).should.eventually.be.resolved;
+    await B.delay(1000); // Give it a second for the URL to become inaccessible
     await request(res.Location).should.eventually.be.rejectedWith(/403/);
   });
 });
