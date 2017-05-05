@@ -9,7 +9,6 @@ import zip from '../lib/s3';
 import * as teenProcess from 'teen_process';
 const { usingTestObject, getTestObjectCaps, uploadTestObjectApp } = TestObject;
 import { fs } from 'appium-support';
-import yargs from 'yargs';
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -27,6 +26,9 @@ describe('testobject-utils.js', function () {
   });
 
   describe('#getTestObjectCaps', function () {
+    beforeEach(function () {
+      delete process.env.TESTOBJECT_DEVICE;
+    });
     it('should be rejected if call to uploadTestObjectApp is rejected', async function () {
       uploadStub.restore();
       uploadStub = sinon.stub(TestObject, 'uploadTestObjectApp', () => { throw new Error('Fake error'); });
@@ -47,6 +49,18 @@ describe('testobject-utils.js', function () {
       caps.a.should.equal('a');
       caps.b.should.equal('b');
       caps.testobject_api_key.should.equal('c');
+    });
+    it('should set testobject_device to default device if no env variable is set', async function () {
+      (await getTestObjectCaps()).testobject_device.should.equal(TestObject.DEFAULT_DEVICE);
+    });
+    it('should set testobject_device to default IOS device if no env variable is set and platformName is IOS', async function () {
+      (await getTestObjectCaps({
+        platformName: 'ios',
+      })).testobject_device.should.equal(TestObject.DEFAULT_IOS_DEVICE);
+    });
+    it('should set testobject_device to process.env.TESTOBJECT_DEVICE', async function () {
+      process.env.TESTOBJECT_DEVICE = 'fake_device';
+      (await getTestObjectCaps()).testobject_device.should.equal('fake_device');
     });
   });
 
@@ -112,7 +126,7 @@ describe('testobject-utils.js', function () {
     });
   });
 
-  describe.only('#usingTestObject', function () {
+  describe('#usingTestObject', function () {
     let uploadZipStub, deleteZipStub, Key, uploadedApp;
 
     before(function () {
@@ -125,7 +139,7 @@ describe('testobject-utils.js', function () {
       });
     });
 
-    usingTestObject('fakeapp.app');
+    usingTestObject(null, 'fakeapp.app');
 
     after(function () {
       Key.should.equal('fakeKey');
@@ -135,7 +149,6 @@ describe('testobject-utils.js', function () {
 
     it('should call uploadZip on fake app provided', () => {
       uploadedApp.should.equal('fakeapp.app');
-      console.log('!!!', yargs.argv);
     });
   });
 });
