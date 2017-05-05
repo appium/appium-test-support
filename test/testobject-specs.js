@@ -126,8 +126,54 @@ describe('testobject-utils.js', function () {
     });
   });
 
+  describe('#overrideWD', function () {
+    let initSpy, promiseChainRemoteSpy, MockWD;
+
+    beforeEach(function () {
+      initSpy = sinon.spy();
+      promiseChainRemoteSpy = sinon.spy();
+
+      MockWD = function MockWD () {
+
+      };
+
+      MockWD.promiseChainRemote = async function promiseChainRemote (HOST, PORT) {
+        promiseChainRemoteSpy(HOST, PORT);
+        const driver = {
+          init: function (caps) {
+            initSpy(caps);
+          },
+        };
+        return driver;  
+      };
+      
+    });
+
+    it('should override wd.promiseChainRemote and driver.init', async function () {
+      // Call without overriding
+      let driver = await MockWD.promiseChainRemote('HOST', 'PORT');
+      promiseChainRemoteSpy.firstCall.args.should.deep.equal(['HOST', 'PORT']);
+      await driver.init({hello: 'world'});
+      initSpy.firstCall.args.should.deep.equal([{hello: 'world'}]);
+
+      // Override and then call again
+      overrideWD(MockWD, 'http://example.com/fake/url');
+      driver = await MockWD.promiseChainRemote('HOST', 'PORT');
+      promiseChainRemoteSpy.secondCall.args[0].should.equal(TestObject.HOST);
+      await driver.init({hello: 'whirl'});
+      initSpy.secondCall.args[0].testobject_device.should.exist;
+      initSpy.secondCall.args[0].testobject_remote_appium_url.should.equal('http://example.com/fake/url');
+      initSpy.secondCall.args[0].hello.should.equal('whirl');
+    });
+  });
+
   describe('#usingTestObject', function () {
     let uploadZipStub, deleteZipStub, Key, uploadedApp;
+
+    class MockWD {
+      async init () { }
+      async promiseChainRemote () { }
+    }
 
     before(function () {
       uploadZipStub = sinon.stub(zip, 'uploadZip', (app) => {
@@ -139,7 +185,7 @@ describe('testobject-utils.js', function () {
       });
     });
 
-    usingTestObject(null, 'fakeapp.app');
+    usingTestObject(MockWD, 'fakeapp.app');
 
     after(function () {
       Key.should.equal('fakeKey');
@@ -149,44 +195,6 @@ describe('testobject-utils.js', function () {
 
     it('should call uploadZip on fake app provided', () => {
       uploadedApp.should.equal('fakeapp.app');
-    });
-  });
-
-  describe('#overrideWD', function () {
-    let initSpy, promiseChainRemoteSpy, MockWD;
-
-    beforeEach(function () {
-      initSpy = sinon.spy();
-      promiseChainRemoteSpy = sinon.spy();
-
-      MockWD = class MockWD {
-        async init (caps) {
-          initSpy(caps);
-        }
-
-        async promiseChainRemote (HOST, PORT) {
-          promiseChainRemoteSpy(HOST, PORT);
-        }
-      };
-      
-    });
-
-    it('should override wd.prototype.init', async function () {
-      const mockWD = new MockWD();
-      await mockWD.init({hello: 'world'});
-      initSpy.firstCall.args.should.deep.equal([{hello: 'world'}]);
-      overrideWD(MockWD);
-      await mockWD.init({hello: 'whirl'});
-      initSpy.secondCall.args[0].testobject_device.should.exist;
-      initSpy.secondCall.args[0].hello.should.equal('whirl');
-    });
-    it('should override wd.prototype.promiseChainRemote', async function () {
-      const mockWD = new MockWD();
-      await mockWD.promiseChainRemote('HOST', 'PORT');
-      promiseChainRemoteSpy.firstCall.args.should.deep.equal(['HOST', 'PORT']);
-      overrideWD(MockWD);
-      await mockWD.promiseChainRemote('HOST', 'PORT');
-      promiseChainRemoteSpy.secondCall.args[0].should.equal(TestObject.HOST);
     });
   });
 });

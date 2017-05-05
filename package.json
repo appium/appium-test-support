@@ -38,11 +38,13 @@
     "watch": "./node_modules/.bin/gulp"
   },
   "devDependencies": {
+    "appium-fake-driver": "^0.1.11",
     "appium-gulp-plugins": "^1.3.12",
     "chai": "^3.0.0",
     "chai-as-promised": "^5.1.0",
     "colors": "^1.1.2",
     "gulp": "^3.8.11",
-    "request-promise": "^4.2.0"
+    "request-promise": "^4.2.0",
+    "wd": "^1.2.0"
   }
 }
