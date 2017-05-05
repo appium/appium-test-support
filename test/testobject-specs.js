@@ -5,9 +5,11 @@ import chaiAsPromised from 'chai-as-promised';
 import { stubEnv } from '../..';
 import sinon from 'sinon';
 import TestObject from '../lib/testobject';
+import zip from '../lib/s3';
 import * as teenProcess from 'teen_process';
-const { /*usingTestObject,*/ getTestObjectCaps, uploadTestObjectApp } = TestObject;
+const { usingTestObject, getTestObjectCaps, uploadTestObjectApp } = TestObject;
 import { fs } from 'appium-support';
+import yargs from 'yargs';
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -110,4 +112,30 @@ describe('testobject-utils.js', function () {
     });
   });
 
+  describe.only('#usingTestObject', function () {
+    let uploadZipStub, deleteZipStub, Key, uploadedApp;
+
+    before(function () {
+      uploadZipStub = sinon.stub(zip, 'uploadZip', (app) => {
+        uploadedApp = app;
+        return {Key: 'fakeKey'};
+      });
+      deleteZipStub = sinon.stub(zip, 'deleteZip', (key) => {
+        Key = key;
+      });
+    });
+
+    usingTestObject('fakeapp.app');
+
+    after(function () {
+      Key.should.equal('fakeKey');
+      uploadZipStub.restore();
+      deleteZipStub.restore();
+    });
+
+    it('should call uploadZip on fake app provided', () => {
+      uploadedApp.should.equal('fakeapp.app');
+      console.log('!!!', yargs.argv);
+    });
+  });
 });
