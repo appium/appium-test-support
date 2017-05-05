@@ -8,16 +8,14 @@ import sinon from 'sinon';
 chai.should();
 chai.use(chaiAsPromised);
 
-describe('TestObject', () => {
-  before(async () => {
-
-  });
-
+describe('TestObject', function () {
   describe.only('#uploadTestObjectApp', function () {
     it('should upload fake app file to testObject', async function () {
       await uploadTestObjectApp(path.resolve('test', 'fixtures', 'fakeApp.app')).should.eventually.be.resolved;
     });
   });
+
+  describe(() => {});
 
   describe('#overrideWD', function () {
     it('should override the admc/wd promiseChainRemote', async function () {
@@ -31,14 +29,13 @@ describe('TestObject', () => {
     });
   });
 
-  describe('#usingTestObject', function () {
-    usingTestObject(wd, path.resolve(process.env.PWD, 'node_modules', 'appium-base-driver'));
+  describe.only('#usingTestObject', function () {
+    usingTestObject.call(this, wd, path.resolve(process.env.PWD, 'node_modules', 'appium-fake-driver'));
     it('should start wd session on TestObject server when using "usingTestObject"', async function () {
-      const driver = await new wd.promiseChainRemote();
+      const driver = await wd.promiseChainRemote();
       await driver.init({
         app: path.resolve('test', 'fixtures', 'fakeApp.app'),
       });
-      console.log('!!!', driver);
       return driver;
     });
   });

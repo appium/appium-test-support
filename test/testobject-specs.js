@@ -137,8 +137,8 @@ describe('testobject-utils.js', function () {
 
       };
 
-      MockWD.promiseChainRemote = async function promiseChainRemote (HOST, PORT) {
-        promiseChainRemoteSpy(HOST, PORT);
+      MockWD.promiseChainRemote = async function promiseChainRemote (...args) {
+        promiseChainRemoteSpy(...args);
         const driver = {
           init: function (caps) {
             initSpy(caps);
@@ -157,13 +157,13 @@ describe('testobject-utils.js', function () {
       initSpy.firstCall.args.should.deep.equal([{hello: 'world'}]);
 
       // Override and then call again
-      overrideWD(MockWD, 'http://example.com/fake/url');
-      driver = await MockWD.promiseChainRemote('HOST', 'PORT');
-      promiseChainRemoteSpy.secondCall.args[0].should.equal(TestObject.HOST);
-      await driver.init({hello: 'whirl'});
-      initSpy.secondCall.args[0].testobject_device.should.exist;
-      initSpy.secondCall.args[0].testobject_remote_appium_url.should.equal('http://example.com/fake/url');
-      initSpy.secondCall.args[0].hello.should.equal('whirl');
+      overrideWD(MockWD);
+      driver = await MockWD.promiseChainRemote({host: 'localhost', port: 123456, https: false, other: 'other'});
+      const params = promiseChainRemoteSpy.secondCall.args[0];
+      params.host.should.equal(TestObject.HOST);
+      params.port.should.equal(TestObject.PORT);
+      params.https.should.equal(true);
+      params.other.should.equal('other');
     });
   });
 
@@ -176,16 +176,16 @@ describe('testobject-utils.js', function () {
     }
 
     before(function () {
-      uploadZipStub = sinon.stub(zip, 'uploadZip', (app) => {
+      uploadZipStub = sinon.stub(zip, 'uploadZip', function (app) {
         uploadedApp = app;
         return {Key: 'fakeKey'};
       });
-      deleteZipStub = sinon.stub(zip, 'deleteZip', (key) => {
+      deleteZipStub = sinon.stub(zip, 'deleteZip', function (key) {
         Key = key;
       });
     });
 
-    usingTestObject(MockWD, 'fakeapp.app');
+    usingTestObject.call(this, MockWD, 'fakeapp.app');
 
     after(function () {
       Key.should.equal('fakeKey');
@@ -193,8 +193,13 @@ describe('testobject-utils.js', function () {
       deleteZipStub.restore();
     });
 
-    it('should call uploadZip on fake app provided', () => {
+    it('should call uploadZip on fake app provided', function () {
       uploadedApp.should.equal('fakeapp.app');
+    });
+
+    it('should reject call to usingTestObject if not called with mocha context', function () {
+      (() => usingTestObject(null)).should.throw(/mocha context/);
+      (() => usingTestObject({foo: () => 'bar'})).should.throw(/mocha context/);
     });
   });
 });
