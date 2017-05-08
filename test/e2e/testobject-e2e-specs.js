@@ -28,7 +28,9 @@ describe('TestObject', function () {
   });
 
   describe.only('#usingTestObject', function () {
-    usingTestObject.call(this, wd, path.resolve(process.env.PWD, 'node_modules', 'appium-fake-driver'));
+    const fakeDriverPath = path.resolve(process.env.PWD, 'node_modules', 'appium-fake-driver');
+    usingTestObject.call(this, wd, fakeDriverPath);
+    
     it('should start wd session on TestObject server when using "usingTestObject"', async function () {
       const driver = await wd.promiseChainRemote();
       await driver.init({
