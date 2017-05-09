@@ -9,25 +9,13 @@ chai.should();
 chai.use(chaiAsPromised);
 
 describe('TestObject', function () {
-  describe('#uploadTestObjectApp', function () {
+  describe.only('#uploadTestObjectApp', function () {
     it('should upload fake app file to testObject', async function () {
-      await uploadTestObjectApp(path.resolve('test', 'fixtures', 'fakeApp.app')).should.eventually.be.resolved;
+      await uploadTestObjectApp(path.resolve('test', 'fixtures', 'SampleAndroidApp.apk')).should.eventually.be.resolved;
     });
   });
 
-  describe('#overrideWD', function () {
-    it('should override the admc/wd promiseChainRemote', async function () {
-      const promiseChainRemoteSpy = sinon.spy(wd, 'promiseChainRemote');
-      overrideWD(wd);
-      const driver = new wd.promiseChainRemote();
-      promiseChainRemoteSpy.calledOnce.should.be.true;
-      promiseChainRemoteSpy.firstCall.args[0].should.equal(TESTOBJECT_HOST);
-      promiseChainRemoteSpy.restore();
-      return driver;
-    });
-  });
-
-  describe.only('#usingTestObject', function () {
+  describe('#usingTestObject', function () {
     const fakeDriverPath = path.resolve(process.env.PWD, 'node_modules', 'appium-fake-driver');
     usingTestObject.call(this, wd, fakeDriverPath);
     
