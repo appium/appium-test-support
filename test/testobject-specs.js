@@ -157,13 +157,21 @@ describe('testobject-utils.js', function () {
       initSpy.firstCall.args.should.deep.equal([{hello: 'world'}]);
 
       // Override and then call again
-      overrideWD(MockWD);
+      overrideWD(MockWD, '/path/to/appium/zip');
       driver = await MockWD.promiseChainRemote({host: 'localhost', port: 123456, https: false, other: 'other'});
-      const params = promiseChainRemoteSpy.secondCall.args[0];
+
+      // Test that promiseChainRemote was correctly overridden
+      let params = promiseChainRemoteSpy.secondCall.args[0];
       params.host.should.equal(TestObject.HOST);
       params.port.should.equal(TestObject.PORT);
       params.https.should.equal(true);
       params.other.should.equal('other');
+
+      // Test that init was correctly overridden
+      await driver.init({hello: 'world'});
+      params = initSpy.secondCall.args[0];
+      params.testobject_remote_appium_url.should.equal('/path/to/appium/zip');
+      params.hello.should.equal('world');
     });
   });
 
