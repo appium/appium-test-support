@@ -9,7 +9,7 @@ chai.should();
 chai.use(chaiAsPromised);
 
 describe('TestObject', function () {
-  describe.only('#uploadTestObjectApp', function () {
+  describe('#uploadTestObjectApp', function () {
     it('should upload fake app file to testObject', async function () {
       await uploadTestObjectApp(path.resolve('test', 'fixtures', 'SampleAndroidApp.apk')).should.eventually.be.resolved;
     });
