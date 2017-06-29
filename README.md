@@ -142,6 +142,18 @@ describe('fakeTime', () => {
   });
 });
 ```
+
+## Travis Android Emu Setup
+
+On [Travis](https://travis-ci.org/), setting up an emulator takes a lot of boilerplate.
+While the configuration needs to be done on a case-by-case basis, the actual startup
+can be scripted. Toward that, there are two scripts:
+* `android-emu-travis-pre` - creates a device (configured with the environment variables
+  `ANDROID_EMU_NAME`, `ANDROID_EMU_TARGET`, and `ANDROID_EMU_ABI`) and starts it
+  in the background
+* `android-emu-travis-post` - waits for the device to be booted, and then goes
+  to its home screen
+
 ## Watch
 
 ```

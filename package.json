@@ -18,7 +18,10 @@
     "node"
   ],
   "main": "./build/index.js",
-  "bin": {},
+  "bin": {
+    "android-emu-travis-pre": "./bin/android-emu-travis-pre.sh",
+    "android-emu-travis-post": "./bin/android-emu-travis-post.sh"
+  },
   "directories": {
     "lib": "lib"
   },
