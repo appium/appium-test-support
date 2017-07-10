@@ -15,7 +15,7 @@ describe('TestObject', function () {
     });
   });
 
-  describe('#usingTestObject', function () {
+  describe.only('#usingTestObject', function () {
     const fakeDriverPath = path.resolve(process.env.PWD, 'node_modules', 'appium');
     usingTestObject.call(this, wd, fakeDriverPath);
     
