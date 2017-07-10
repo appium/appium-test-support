@@ -1,6 +1,6 @@
 // transpile:mocha
 
-import { uploadZip, deleteZip } from '..';
+import { uploadZip, deleteZip } from '../lib/s3';
 
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
