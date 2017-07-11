@@ -5,9 +5,9 @@ import chaiAsPromised from 'chai-as-promised';
 import { stubEnv } from '../..';
 import sinon from 'sinon';
 import TestObject from '../lib/testobject';
-import zip from '../lib/s3';
+import S3 from '../lib/s3';
 import * as teenProcess from 'teen_process';
-const { usingTestObject, getTestObjectCaps, uploadTestObjectApp, overrideWD } = TestObject;
+const { getTestObjectCaps, uploadTestObjectApp, overrideWD } = TestObject;
 import { fs } from 'appium-support';
 
 chai.should();
@@ -69,7 +69,7 @@ describe('testobject-utils.js', function () {
     beforeEach(function () {
       process.env.TESTOBJECT_USERNAME = 'foobar';
       process.env.TESTOBJECT_API_KEY = 1234;
-      execStub = sinon.stub(teenProcess, 'exec', () => 1);
+      execStub = sinon.stub(teenProcess, 'exec', () => ({stdout: 1}));
       fsStatStub = sinon.stub(fs, 'stat', () => ({
         mtime: +(new Date()) - 2 * 24 * 60 * 60 * 1000, // Pretend app was last modified 2 days ago
       }));
@@ -77,6 +77,9 @@ describe('testobject-utils.js', function () {
     afterEach(function () {
       execStub.restore();
       fsStatStub.restore();
+    });
+    it('should be upload if TESTOBJECT_USERNAME and TESTOBJECT_API_KEY is set', async function () {
+      await uploadTestObjectApp().should.eventually.equal(1);
     });
     it('should be rejected if TESTOBJECT_USERNAME is not defined', async function () {
       process.env.TESTOBJECT_USERNAME = null;
@@ -86,18 +89,14 @@ describe('testobject-utils.js', function () {
       process.env.TESTOBJECT_API_KEY = null;
       await uploadTestObjectApp().should.eventually.be.rejectedWith(/TESTOBJECT_API_KEY/);
     });
-    it('should be rejected if there is a network error', async function () {
-      process.env.TESTOBJECT_USERNAME = 'foobar';
-      await uploadTestObjectApp().should.eventually.equal(1);
-    });
     it('should call cURL with -u and --data-binary args', async function () {
       execStub.restore();
       execStub = sinon.stub(teenProcess, 'exec', (command, args) => {
         command.should.equal('curl');
-        args[1].should.equal('"foobar:1234"');
+        args[1].should.equal('foobar:1234');
         args[args.length - 1].should.equal('@fakeapp.app');
       });
-      await uploadTestObjectApp('fakeapp.app');
+      await uploadTestObjectApp('fakeapp.app').should.eventually.be.resolved;
     });
     it('should re-use appId if app was already uploaded earlier', async function () {
       TestObject._appIdCache['fakeapp.app'] = {
@@ -175,39 +174,56 @@ describe('testobject-utils.js', function () {
     });
   });
 
-  describe('#usingTestObject', function () {
-    let uploadZipStub, deleteZipStub, Key, uploadedApp;
+  describe('#enableTestObject', function () {
+    let uploadZipStub, overrideWDStub;
 
-    class MockWD {
-      async init () { }
-      async promiseChainRemote () { }
-    }
-
-    before(function () {
-      uploadZipStub = sinon.stub(zip, 'uploadZip', function (app) {
-        uploadedApp = app;
-        return {Key: 'fakeKey'};
-      });
-      deleteZipStub = sinon.stub(zip, 'deleteZip', function (key) {
-        Key = key;
-      });
+    beforeEach(async function () {
+      uploadZipStub = sinon.stub(S3, 'uploadZip');
+      overrideWDStub = sinon.stub(TestObject, 'overrideWD');
     });
 
-    usingTestObject.call(this, MockWD, 'fakeapp.app');
-
-    after(function () {
-      Key.should.equal('fakeKey');
+    afterEach(function () {
       uploadZipStub.restore();
-      deleteZipStub.restore();
+      overrideWDStub.restore();
     });
 
-    it('should call uploadZip on fake app provided', function () {
-      uploadedApp.should.equal('fakeapp.app');
+    it('should be rejected if it fails to upload appiumDir zip', async function () {
+      uploadZipStub.throws('S3 Upload Error');
+      await TestObject.enableTestObject(null, '/does/not/matter').should.eventually.be.rejectedWith(/S3 Upload Error/);
     });
 
-    it('should reject call to usingTestObject if not called with mocha context', function () {
-      (() => usingTestObject(null)).should.throw(/mocha context/);
-      (() => usingTestObject({foo: () => 'bar'})).should.throw(/mocha context/);
+    it('should call uploadZip and then return the result of overrideWD', async function () {
+      let fakeWD = {fakeWD: 'fakeWD'};
+      uploadZipStub.reset();
+      uploadZipStub.returns({Location: 'HelloWorldLand', Key: 'key'});
+      overrideWDStub.throws('Incorrect parameters');
+      overrideWDStub.withArgs(fakeWD, 'HelloWorldLand').returns('hello world');
+      const {wdOverride, appiumS3Object, wd} = await TestObject.enableTestObject(fakeWD, '/does/not/matter');
+      appiumS3Object.should.deep.equal({
+        Location: 'HelloWorldLand',
+        Key: 'key',
+      });
+      wd.should.deep.equal({fakeWD: 'fakeWD'});
+      wdOverride.should.equal('hello world');
+    });
+  });
+  describe('#disableTestObject', function () {
+    let restoreWDStub, deleteZipStub;
+    beforeEach(async function () {
+      restoreWDStub = sinon.stub(TestObject, 'restoreWD');
+      deleteZipStub = sinon.stub(S3, 'deleteZip');
+    });
+    it('should call restoreWD and deleteZip', function () {
+      restoreWDStub.throws('invalid args');
+      deleteZipStub.throws('invalid args');
+      const wdObj = {
+        wd: 'wd',
+        wdOverride: 'wdOverride',
+        appiumS3Object: {Key: 'appiumS3ObjectKey'},
+      };
+      restoreWDStub.withArgs('wd', 'wdOverride').returns(undefined);
+      deleteZipStub.withArgs('appiumS3ObjectKey').returns(undefined);
+      TestObject.disableTestObject(wdObj).should.eventually.be.resolved;
     });
   });
 });
