@@ -2,12 +2,18 @@
 
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+<<<<<<< HEAD
 import { stubEnv } from '..';
+=======
+import mockFS from 'mock-fs';
+import path from 'path';
+import { stubEnv } from '../..';
+>>>>>>> Added method that injects driver into appium
 import sinon from 'sinon';
 import TestObject from '../lib/testobject';
 import S3 from '../lib/s3';
 import * as teenProcess from 'teen_process';
-const { getTestObjectCaps, uploadTestObjectApp, overrideWD } = TestObject;
+const { getTestObjectCaps, uploadTestObjectApp, overrideWD, injectDriverIntoAppium } = TestObject;
 import { fs } from 'appium-support';
 
 chai.should();
@@ -227,4 +233,69 @@ describe('testobject-utils.js', function () {
       TestObject.disableTestObject(wdObj).should.eventually.be.resolved;
     });
   });
+<<<<<<< HEAD
 });
+=======
+  describe('#injectDriverIntoAppium', function () {
+    const fakePath = 'fake/dir/path/';
+  
+    beforeEach(async function () {
+      mockFS({
+        [fakePath]: {
+          'appium': {
+            'node_modules': {
+              'appium-hello-driver': {
+                'a.txt': 'A',
+                'b.txt': 'B',
+              },
+              'appium-world-driver': {
+                'c.txt': 'C',
+                'd.txt': 'D',
+              },
+            }
+          },
+          'appium-world-driver': {
+            'e.txt': 'E',
+            'f.txt': 'F',
+          },
+          'appium-new-driver': {
+            'g.txt': 'G',
+            'h.txt': 'H',
+          },
+        },
+      });
+    });
+    after(function () {
+      mockFS.restore();
+    });
+    it('should add driver to node_modules if the driver is new', async function () {
+      await fs.readFile(path.resolve(fakePath, 'appium', 'appium-new-driver', 'g.txt')).should.eventually.be.rejectedWith(/ENOENT/);
+      await fs.exists(path.resolve(fakePath, 'appium-dest')).should.eventually.be.false;
+      await injectDriverIntoAppium(
+        path.resolve(fakePath, 'appium'), 
+        path.resolve(fakePath, 'appium-dest'), 
+        path.resolve(fakePath, 'appium-new-driver'), 
+        'appium-new-driver'
+      );
+      await fs.exists(path.resolve(fakePath, 'appium-dest')).should.eventually.be.true;
+      await fs.exists(path.resolve(fakePath, 'appium-dest', 'node_modules', 'appium-new-driver')).should.eventually.be.true;
+      await fs.readFile(path.resolve(fakePath, 'appium-dest', 'node_modules', 'appium-new-driver', 'g.txt'), 'utf8').should.eventually.equal('G');
+      await fs.readFile(path.resolve(fakePath, 'appium-dest', 'node_modules', 'appium-new-driver', 'h.txt'), 'utf8').should.eventually.equal('H');
+    });
+    it('should delete what is currently the driver and replace it with a new one', async function () {
+      await fs.readFile(path.resolve(fakePath, 'appium', 'node_modules', 'appium-world-driver', 'c.txt'), 'utf8').should.eventually.equal('C');
+      await fs.readFile(path.resolve(fakePath, 'appium', 'node_modules', 'appium-world-driver', 'd.txt'), 'utf8').should.eventually.equal('D');
+      await injectDriverIntoAppium(
+        path.resolve(fakePath, 'appium'), 
+        path.resolve(fakePath, 'appium-dest'),
+        path.resolve(fakePath, 'appium-world-driver'), 
+        'appium-world-driver'
+      );
+      await fs.readFile(path.resolve(fakePath, 'appium-dest', 'node_modules', 'appium-world-driver', 'e.txt'), 'utf8').should.eventually.equal('E');
+      await fs.readFile(path.resolve(fakePath, 'appium-dest', 'node_modules', 'appium-world-driver', 'f.txt'), 'utf8').should.eventually.equal('F');
+      await fs.readFile(path.resolve(fakePath, 'appium', 'node_modules', 'appium-world-driver', 'c.txt'), 'utf8').should.eventually.equal('C');
+      await fs.readFile(path.resolve(fakePath, 'appium', 'node_modules', 'appium-world-driver', 'd.txt'), 'utf8').should.eventually.equal('D');
+    });
+  });
+});
+>>>>>>> Added method that injects driver into appium
