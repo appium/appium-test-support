@@ -2,7 +2,7 @@
 
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { stubEnv } from '../..';
+import { stubEnv } from '..';
 import sinon from 'sinon';
 import TestObject from '../lib/testobject';
 import S3 from '../lib/s3';
@@ -90,11 +90,12 @@ describe('testobject-utils.js', function () {
       await uploadTestObjectApp().should.eventually.be.rejectedWith(/TESTOBJECT_API_KEY/);
     });
     it('should call cURL with -u and --data-binary args', async function () {
-      execStub.restore();
+      execStub.restore(); // wrapping differently than the rest, so restore and re-wrap
       execStub = sinon.stub(teenProcess, 'exec', (command, args) => {
         command.should.equal('curl');
         args[1].should.equal('foobar:1234');
         args[args.length - 1].should.equal('@fakeapp.app');
+        return {stdout: ''};
       });
       await uploadTestObjectApp('fakeapp.app').should.eventually.be.resolved;
     });
@@ -110,7 +111,7 @@ describe('testobject-utils.js', function () {
       await uploadTestObjectApp('fakeapp.app');
       const cache = TestObject._appIdCache['fakeapp.app'];
 
-      // Test that the cache recorded it being uploaded within the last 10 seconds 
+      // Test that the cache recorded it being uploaded within the last 10 seconds
       cache.uploaded.should.be.below(+(new Date()) + 1);
       cache.uploaded.should.be.above(+(new Date()) - 10000);
       cache.id.should.equal(1);
@@ -139,13 +140,13 @@ describe('testobject-utils.js', function () {
       MockWD.promiseChainRemote = async function promiseChainRemote (...args) {
         promiseChainRemoteSpy(...args);
         const driver = {
-          init: function (caps) {
+          init (caps) {
             initSpy(caps);
           },
         };
-        return driver;  
+        return driver;
       };
-      
+
     });
 
     it('should override wd.promiseChainRemote and driver.init', async function () {

@@ -8,11 +8,11 @@ import B from 'bluebird';
 
 chai.should();
 
-function doSomething() {
+function doSomething () {
   return new B.Promise((resolve) => {
     let ret = '';
     function appendOneByOne () {
-      if(ret.length >= 10) {
+      if (ret.length >= 10) {
         return resolve(ret);
       }
       setTimeout(() => {
@@ -41,4 +41,3 @@ describe('time-utils', () => {
     });
   });
 });
-
