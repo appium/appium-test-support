@@ -1,4 +1,5 @@
 // transpile:mocha
+/* eslint-disable promise/prefer-await-to-callbacks */
 
 import { uploadZip, deleteZip } from '../lib/s3';
 
@@ -59,15 +60,14 @@ describe('s3', () => {
       process.env.AWS_S3_BUCKET = backupBucket;
     });
     it('should reject if s3.deleteObject throws error', async () => {
-      const deleteObjectStub = sinon.stub(s3Proto, 'deleteObject', (obj, cb) => { cb(new Error('does not matter')); });      
+      const deleteObjectStub = sinon.stub(s3Proto, 'deleteObject', (obj, cb) => { cb(new Error('does not matter')); });
       await deleteZip().should.eventually.be.rejectedWith(/Could not delete/);
       deleteObjectStub.restore();
     });
     it('should resolve if s3.deleteObject does not fail', async () => {
-      const deleteObjectStub = sinon.stub(s3Proto, 'deleteObject', (obj, cb) => { cb(null, 'Success'); });      
+      const deleteObjectStub = sinon.stub(s3Proto, 'deleteObject', (obj, cb) => { cb(null, 'Success'); });
       await deleteZip().should.eventually.equal('Success');
       deleteObjectStub.restore();
     });
   });
 });
-
