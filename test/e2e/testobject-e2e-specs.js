@@ -3,13 +3,20 @@ import chaiAsPromised from 'chai-as-promised';
 import path from 'path';
 import wd from 'wd';
 import request from 'request-promise';
-import { uploadTestObjectApp, disableTestObject, enableTestObject } from '../../lib/testobject';
+import { fs } from 'appium-support';
+import { uploadTestObjectApp, disableTestObject, enableTestObject, fetchAppium } from '../../lib/testobject';
 
 chai.should();
 chai.use(chaiAsPromised);
 
 describe('TestObject', function () {
-  this.timeout(20 * 60 * 1000);
+  describe('#fetchAppium', function () {
+    it('fetches appium zip', async function () {
+      const appiumZip = await fetchAppium('appium-uiautomator2-driver', 'git+ssh://git@github.com/appium/appium-uiautomator2-driver.git');
+      await fs.exists(appiumZip).should.eventually.be.true;
+    });
+  });
+
   describe('#uploadTestObjectApp', function () {
     it('should upload fake app file to testObject', async function () {
       await uploadTestObjectApp(path.resolve('test', 'fixtures', 'ContactManager.apk')).should.eventually.be.resolved;
@@ -18,7 +25,7 @@ describe('TestObject', function () {
 
   describe('.enableTestObject, .disableTestObject', function () {
     it('should enable testObject tests and then be able to disable them afterwards', async function () {
-      const wdObject = await enableTestObject(wd, path.resolve(process.env.PWD, 'node_modules', 'appium'));
+      const wdObject = await enableTestObject(wd, 'appium-uiautomator2-driver', 'git+ssh://git@github.com/appium/appium-uiautomator2-driver.git');
 
       // Test that the zip was uploaded
       const location = wdObject.appiumS3Object.Location;

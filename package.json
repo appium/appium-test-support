@@ -63,14 +63,12 @@
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-mocha": "^4.7.0",
     "eslint-plugin-promise": "^3.3.1",
+    "github": "^10.1.0",
     "gulp": "^3.8.11",
-<<<<<<< HEAD
     "mocha": "^3.5.0",
     "pre-commit": "^1.2.2",
-=======
-    "mock-fs": "^4.4.1",
->>>>>>> Added method that injects driver into appium
     "request-promise": "^4.2.0",
-    "wd": "^1.2.0"
+    "wd": "^1.2.0",
+    "mock-fs": "^4.4.1"
   }
 }
