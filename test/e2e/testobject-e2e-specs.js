@@ -12,7 +12,11 @@ chai.use(chaiAsPromised);
 describe('TestObject', function () {
   describe('#fetchAppium', function () {
     it('fetches appium zip', async function () {
-      const appiumZip = await fetchAppium('appium-uiautomator2-driver', 'git+ssh://git@github.com/appium/appium-uiautomator2-driver.git');
+      const appiumZip = await fetchAppium(
+        'appium-uiautomator2-driver', 
+        'git+ssh://git@github.com/appium/appium-uiautomator2-driver.git',
+        'master'
+      );
       await fs.exists(appiumZip).should.eventually.be.true;
     });
   });
