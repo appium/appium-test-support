@@ -2,8 +2,7 @@
 
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import path from 'path';
-import { stubEnv } from '../..';
+import { stubEnv } from '..';
 import sinon from 'sinon';
 import TestObject from '../lib/testobject';
 import S3 from '../lib/s3';
