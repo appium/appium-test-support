@@ -7,7 +7,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import AWS from 'aws-sdk';
-import { zip, fs } from 'appium-support';
+import { fs } from 'appium-support';
 chai.should();
 chai.use(chaiAsPromised);
 
