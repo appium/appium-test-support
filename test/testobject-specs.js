@@ -176,24 +176,30 @@ describe('testobject-utils.js', function () {
   });
 
   describe('#enableTestObject', function () {
-    let uploadZipStub, overrideWDStub;
+    let uploadZipStub, overrideWDStub, fetchAppiumStub, rimrafStub;
 
     beforeEach(async function () {
       uploadZipStub = sinon.stub(S3, 'uploadZip');
       overrideWDStub = sinon.stub(TestObject, 'overrideWD');
+      fetchAppiumStub = sinon.stub(TestObject, 'fetchAppium');
+      rimrafStub = sinon.stub(fs, 'rimraf');
     });
 
     afterEach(function () {
       uploadZipStub.restore();
       overrideWDStub.restore();
+      fetchAppiumStub.restore();
+      rimrafStub.restore();
     });
 
     it('should be rejected if it fails to upload appiumDir zip', async function () {
       uploadZipStub.throws('S3 Upload Error');
+      fetchAppiumStub.returns('/fake/path/to/zip.zip');
       await TestObject.enableTestObject(null, '/does/not/matter').should.eventually.be.rejectedWith(/S3 Upload Error/);
     });
 
     it('should call uploadZip and then return the result of overrideWD', async function () {
+      rimrafStub.returns(true);
       let fakeWD = {fakeWD: 'fakeWD'};
       uploadZipStub.reset();
       uploadZipStub.returns({Location: 'HelloWorldLand', Key: 'key'});
