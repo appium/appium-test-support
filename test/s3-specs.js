@@ -7,7 +7,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import AWS from 'aws-sdk';
-import { zip, fs } from 'appium-support';
+import { fs } from 'appium-support';
 chai.should();
 chai.use(chaiAsPromised);
 
@@ -15,14 +15,14 @@ describe('s3', () => {
   let s3Proto = Object.getPrototypeOf(new AWS.S3());
 
   describe('uploadZip', () => {
-    let zipStub, fileExistsStub;
+    let fileExistsStub, readFileStub;
     beforeEach(() => {
-      zipStub = sinon.stub(zip, 'toInMemoryZip', () => 'ABC');
       fileExistsStub = sinon.stub(fs, 'exists', () => true);
+      readFileStub = sinon.stub(fs, 'readFile', () => "dummy");
     });
     afterEach(() => {
       fileExistsStub.restore();
-      zipStub.restore();
+      readFileStub.restore();
     });
     it('should reject if AWS_S3_BUCKET not defined in env', async () => {
       const backupBucket = process.env.AWS_S3_BUCKET;
@@ -33,16 +33,11 @@ describe('s3', () => {
     it('should reject if file does not exist', async () => {
       fileExistsStub.restore();
       fileExistsStub = sinon.stub(fs, 'exists', () => false);
-      await uploadZip().should.eventually.be.rejectedWith(/Could not find/);
-    });
-    it('should reject if zip fails', async () => {
-      zipStub.restore();
-      zipStub = sinon.stub(zip, 'toInMemoryZip', () => { throw new Error('Zip failed'); });
-      await uploadZip().should.eventually.be.rejectedWith(/Could not zip/);
+      await uploadZip('/fake/file/path.zip').should.eventually.be.rejectedWith(/Could not find/);
     });
     it('should reject if s3.upload fails', async () => {
       const uploaderStub = sinon.stub(s3Proto, 'upload', (obj, cb) => { cb(new Error('does not matter')); });
-      await uploadZip().should.eventually.be.rejectedWith(/Could not upload/);
+      await uploadZip('/fake/file/path.zip').should.eventually.be.rejectedWith(/Could not upload/);
       uploaderStub.restore();
     });
     it('should pass if s3.upload does not fail', async () => {

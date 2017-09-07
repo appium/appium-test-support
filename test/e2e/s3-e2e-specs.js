@@ -13,7 +13,7 @@ chai.should();
 chai.use(chaiAsPromised);
 
 describe('S3', () => {
-  let tempDir, testDir;
+  let tempDir, testDir, zipPath;
 
   before(async () => {
     // Create a temporary directory with one file and upload it to S3
@@ -21,7 +21,8 @@ describe('S3', () => {
     testDir = path.resolve(tempDir, 'test-dir');
     await mkdir(testDir);
     const fileContents = 'Temporary file contents';
-    await writeFile(path.resolve(testDir, 'temp-file.txt'), fileContents);
+    zipPath = path.resolve(testDir, 'temp-file.zip');
+    await writeFile(zipPath, fileContents);
   });
 
   it('should zip directories and publish them to S3 and then unpublish them', async function () {
@@ -29,7 +30,7 @@ describe('S3', () => {
     if (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY) {
       this.skip();
     }
-    const res = await uploadZip(testDir);
+    const res = await uploadZip(zipPath);
 
     // Download the zipped directory, unzip it, and compare it's contents to the original temporary directory
     await request(res.Location).should.eventually.be.resolved;
