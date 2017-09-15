@@ -1,6 +1,11 @@
+sudo: required
 language: node_js
 node_js:
   - "6"
   - "7"
 after_success:
   - npm run coverage
+script:
+  - npm run build
+  - npm test
+  - npm run e2e-test

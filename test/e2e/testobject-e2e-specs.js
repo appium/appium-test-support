@@ -4,7 +4,9 @@ import path from 'path';
 import wd from 'wd';
 import request from 'request-promise';
 import { fs } from 'appium-support';
-import { uploadTestObjectApp, disableTestObject, enableTestObject, fetchAppium } from '../../lib/testobject';
+import AWS from 'aws-sdk';
+import sinon from 'sinon';
+import { uploadTestObjectApp, enableTestObject, disableTestObject, fetchAppium } from '../../lib/testobject';
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -14,7 +16,7 @@ describe('TestObject', function () {
     it('fetches appium zip', async function () {
       const appiumZip = await fetchAppium(
         'appium-uiautomator2-driver',
-        'git+ssh://git@github.com/appium/appium-uiautomator2-driver.git',
+        'git+https://git@github.com/appium/appium-uiautomator2-driver.git',
         'master'
       );
       await fs.exists(appiumZip).should.eventually.be.true;
@@ -29,10 +31,14 @@ describe('TestObject', function () {
 
   describe('.enableTestObject, .disableTestObject', function () {
     it('should enable testObject tests and then be able to disable them afterwards', async function () {
-      const wdObject = await enableTestObject(wd, 'appium-uiautomator2-driver', 'git+ssh://git@github.com/appium/appium-uiautomator2-driver.git');
+      const s3Proto = Object.getPrototypeOf(new AWS.S3());
+      const s3UploadSpy = sinon.spy(s3Proto, 'upload');
+      s3Proto.upload.notCalled.should.be.true;
+      const wdObject = await enableTestObject(wd, 'appium-uiautomator2-driver', 'git+https://git@github.com/appium/appium-uiautomator2-driver.git');
+      s3Proto.upload.callCount.should.be.below(2);
 
       // Test that the zip was uploaded
-      const location = wdObject.appiumS3Object.Location;
+      const location = wdObject.s3Location;
       await request(location).should.eventually.be.resolved;
 
       // Test that we can do TestObject tests
@@ -44,9 +50,13 @@ describe('TestObject', function () {
       source.should.contain('android.widget.LinearLayout');
       await driver.quit();
 
-      // Check that after we clean up, the zip file is gone
+      // Disable test object
       await disableTestObject(wdObject);
-      await request(location).should.eventually.be.rejectedWith(/403/);
+
+      // Enable it again
+      await enableTestObject(wd, 'appium-uiautomator2-driver', 'git+ssh://git@github.com/appium/appium-uiautomator2-driver.git');
+      s3Proto.upload.calledTwice.should.be.false;
+      s3UploadSpy.restore();
     });
   });
 });

@@ -202,35 +202,12 @@ describe('testobject-utils.js', function () {
       rimrafStub.returns(true);
       let fakeWD = {fakeWD: 'fakeWD'};
       uploadZipStub.reset();
-      uploadZipStub.returns({Location: 'HelloWorldLand', Key: 'key'});
-      overrideWDStub.throws('Incorrect parameters');
+      uploadZipStub.returns('HelloWorldLand');
       overrideWDStub.withArgs(fakeWD, 'HelloWorldLand').returns('hello world');
-      const {wdOverride, appiumS3Object, wd} = await TestObject.enableTestObject(fakeWD, '/does/not/matter');
-      appiumS3Object.should.deep.equal({
-        Location: 'HelloWorldLand',
-        Key: 'key',
-      });
+      const {wdOverride, s3Location, wd} = await TestObject.enableTestObject(fakeWD, 'fake-driver-name', 'git+https://github.com/fake/url');
+      s3Location.should.equal('HelloWorldLand');
       wd.should.deep.equal({fakeWD: 'fakeWD'});
       wdOverride.should.equal('hello world');
-    });
-  });
-  describe('#disableTestObject', function () {
-    let restoreWDStub, deleteZipStub;
-    beforeEach(async function () {
-      restoreWDStub = sinon.stub(TestObject, 'restoreWD');
-      deleteZipStub = sinon.stub(S3, 'deleteZip');
-    });
-    it('should call restoreWD and deleteZip', function () {
-      restoreWDStub.throws('invalid args');
-      deleteZipStub.throws('invalid args');
-      const wdObj = {
-        wd: 'wd',
-        wdOverride: 'wdOverride',
-        appiumS3Object: {Key: 'appiumS3ObjectKey'},
-      };
-      restoreWDStub.withArgs('wd', 'wdOverride').returns(undefined);
-      deleteZipStub.withArgs('appiumS3ObjectKey').returns(undefined);
-      TestObject.disableTestObject(wdObj).should.eventually.be.resolved;
     });
   });
 });
