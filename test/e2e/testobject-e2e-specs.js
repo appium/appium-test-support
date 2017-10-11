@@ -12,7 +12,7 @@ chai.should();
 chai.use(chaiAsPromised);
 
 describe('TestObject', function () {
-  describe('#fetchAppium', function () {
+  describe('#fetchAppium @skip-ci', function () {
     it('fetches appium zip', async function () {
       const appiumZip = await fetchAppium(
         'appium-uiautomator2-driver',
