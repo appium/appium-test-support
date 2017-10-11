@@ -29,6 +29,7 @@
     "appium-support": "^2.5.0",
     "aws-sdk": "^2.46.0",
     "babel-runtime": "=5.8.24",
+    "bestzip": "^1.1.4",
     "bluebird": "^2.9.32",
     "lodash": "^3.10.0",
     "sinon": "^1.15.4",
