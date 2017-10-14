@@ -38,7 +38,7 @@ describe('TestObject', function () {
         wd,
         'appium-uiautomator2-driver',
         'git+https://git@github.com/appium/appium-uiautomator2-driver.git',
-        'RANDOM_SHA',
+        'MASTER',
       );
       s3Proto.upload.callCount.should.be.below(2);
 
