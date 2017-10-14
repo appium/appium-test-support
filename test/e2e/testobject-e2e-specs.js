@@ -29,7 +29,7 @@ describe('TestObject', function () {
     });
   });
 
-  describe.only('.enableTestObject, .disableTestObject', function () {
+  describe('.enableTestObject, .disableTestObject', function () {
     it('should enable testObject tests and then be able to disable them afterwards', async function () {
       const s3Proto = Object.getPrototypeOf(new AWS.S3());
       const s3UploadSpy = sinon.spy(s3Proto, 'upload');
