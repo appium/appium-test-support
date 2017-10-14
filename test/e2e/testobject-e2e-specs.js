@@ -29,7 +29,7 @@ describe('TestObject', function () {
     });
   });
 
-  describe('.enableTestObject, .disableTestObject', function () {
+  describe.only('.enableTestObject, .disableTestObject', function () {
     it('should enable testObject tests and then be able to disable them afterwards', async function () {
       const s3Proto = Object.getPrototypeOf(new AWS.S3());
       const s3UploadSpy = sinon.spy(s3Proto, 'upload');
@@ -38,7 +38,7 @@ describe('TestObject', function () {
         wd,
         'appium-uiautomator2-driver',
         'git+https://git@github.com/appium/appium-uiautomator2-driver.git',
-        'MASTER',
+        'master',
       );
       s3Proto.upload.callCount.should.be.below(2);
 
