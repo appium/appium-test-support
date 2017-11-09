@@ -55,6 +55,7 @@
     "appium": "^1.6.5",
     "appium-gulp-plugins": "^2.1.4",
     "babel-eslint": "^7.1.1",
+    "bestzip": "^1.1.4",
     "chai": "^3.0.0",
     "chai-as-promised": "^5.1.0",
     "colors": "^1.1.2",
@@ -66,9 +67,9 @@
     "eslint-plugin-promise": "^3.3.1",
     "gulp": "^3.8.11",
     "mocha": "^3.5.0",
+    "mock-fs": "^4.4.1",
     "pre-commit": "^1.2.2",
     "request-promise": "^4.2.0",
-    "wd": "^1.2.0",
-    "mock-fs": "^4.4.1"
+    "wd": "^1.2.0"
   }
 }
