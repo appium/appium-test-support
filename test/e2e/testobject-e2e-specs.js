@@ -12,12 +12,12 @@ chai.should();
 chai.use(chaiAsPromised);
 
 describe('TestObject', function () {
-  describe('#fetchAppium', function () {
+  describe('#fetchAppium @skip-ci', function () {
     it('fetches appium zip', async function () {
       const appiumZip = await fetchAppium(
         'appium-uiautomator2-driver',
         'git+https://git@github.com/appium/appium-uiautomator2-driver.git',
-        'master'
+        'master',
       );
       await fs.exists(appiumZip).should.eventually.be.true;
     });
@@ -34,7 +34,12 @@ describe('TestObject', function () {
       const s3Proto = Object.getPrototypeOf(new AWS.S3());
       const s3UploadSpy = sinon.spy(s3Proto, 'upload');
       s3Proto.upload.notCalled.should.be.true;
-      const wdObject = await enableTestObject(wd, 'appium-uiautomator2-driver', 'git+https://git@github.com/appium/appium-uiautomator2-driver.git');
+      const wdObject = await enableTestObject(
+        wd,
+        'appium-uiautomator2-driver',
+        'git+https://git@github.com/appium/appium-uiautomator2-driver.git',
+        'master',
+      );
       s3Proto.upload.callCount.should.be.below(2);
 
       // Test that the zip was uploaded
