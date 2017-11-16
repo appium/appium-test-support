@@ -29,17 +29,6 @@ describe('testobject-utils.js', function () {
     beforeEach(function () {
       delete process.env.TESTOBJECT_DEVICE;
     });
-    it('should be rejected if call to uploadTestObjectApp is rejected', async function () {
-      uploadStub.restore();
-      uploadStub = sinon.stub(TestObject, 'uploadTestObjectApp', () => { throw new Error('Fake error'); });
-      await getTestObjectCaps().should.eventually.be.rejectedWith(/Could not upload/);
-    });
-    it('should pass a cap with the TESTOBJECT_API_KEY and testobject_app_id in it', async function () {
-      process.env.TESTOBJECT_API_KEY = 'foobar';
-      const caps = await getTestObjectCaps();
-      caps.testobject_api_key.should.equal(process.env.TESTOBJECT_API_KEY);
-      caps.testobject_app_id.should.equal(appId);
-    });
     it('should extend caps that were passed in', async function () {
       process.env.TESTOBJECT_API_KEY = 'c';
       const caps = await getTestObjectCaps({
@@ -50,17 +39,13 @@ describe('testobject-utils.js', function () {
       caps.b.should.equal('b');
       caps.testobject_api_key.should.equal('c');
     });
-    it('should set testobject_device to default device if no env variable is set', async function () {
-      (await getTestObjectCaps()).testobject_device.should.equal(TestObject.DEFAULT_DEVICE);
-    });
-    it('should set testobject_device to default IOS device if no env variable is set and platformName is IOS', async function () {
-      (await getTestObjectCaps({
-        platformName: 'ios',
-      })).testobject_device.should.equal(TestObject.DEFAULT_IOS_DEVICE);
-    });
     it('should set testobject_device to process.env.TESTOBJECT_DEVICE', async function () {
       process.env.TESTOBJECT_DEVICE = 'fake_device';
       (await getTestObjectCaps()).testobject_device.should.equal('fake_device');
+    });
+    it('should set the platformVersion to process.env.TESTOBJECT_PLATFORM_VERSION', async function () {
+      process.env.TESTOBJECT_PLATFORM_VERSION = '5';
+      (await getTestObjectCaps()).platformVersion.should.equal('5');
     });
   });
 
