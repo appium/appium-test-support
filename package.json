@@ -55,7 +55,6 @@
     "appium": "^1.6.5",
     "appium-gulp-plugins": "^2.1.4",
     "babel-eslint": "^7.1.1",
-    "bestzip": "^1.1.4",
     "chai": "^3.0.0",
     "chai-as-promised": "^5.1.0",
     "colors": "^1.1.2",
