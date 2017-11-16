@@ -66,9 +66,9 @@
     "eslint-plugin-promise": "^3.3.1",
     "gulp": "^3.8.11",
     "mocha": "^3.5.0",
+    "mock-fs": "^4.4.1",
     "pre-commit": "^1.2.2",
     "request-promise": "^4.2.0",
-    "wd": "^1.2.0",
-    "mock-fs": "^4.4.1"
+    "wd": "^1.2.0"
   }
 }
