@@ -14,30 +14,30 @@ const {uploadZip} = S3;
 chai.should();
 chai.use(chaiAsPromised);
 
-describe('s3', () => {
+describe('s3', function () {
   let s3Proto = Object.getPrototypeOf(new AWS.S3());
 
-  describe('uploadZip', () => {
+  describe('uploadZip', function () {
     let fileExistsStub, readFileStub, uploaderStub, s3FileExistsStub;
-    beforeEach(() => {
+    beforeEach(function () {
       fileExistsStub = sinon.stub(fs, 'exists');
       readFileStub = sinon.stub(fs, 'readFile');
       s3FileExistsStub = sinon.stub(S3, 'fileExists');
       readFileStub.returns('dummy');
       fileExistsStub.returns(true);
     });
-    afterEach(() => {
+    afterEach(function () {
       fileExistsStub.restore();
       readFileStub.restore();
       s3FileExistsStub.restore();
     });
-    it('should reject if AWS_S3_BUCKET not defined in env', async () => {
+    it('should reject if AWS_S3_BUCKET not defined in env', async function () {
       const backupBucket = process.env.AWS_S3_BUCKET;
       delete process.env.AWS_S3_BUCKET;
       await uploadZip().should.eventually.be.rejectedWith(/AWS_S3_BUCKET/);
       process.env.AWS_S3_BUCKET = backupBucket;
     });
-    it('should reject if file does not exist', async () => {
+    it('should reject if file does not exist', async function () {
       fileExistsStub.restore();
       fileExistsStub.returns(false);
       const fakeEventObject = {
@@ -50,7 +50,7 @@ describe('s3', () => {
       await uploadZip('/fake/file/path.zip').should.eventually.be.rejectedWith(/Could not find/);
       uploaderStub.restore();
     });
-    it('should reject if s3.upload fails', async () => {
+    it('should reject if s3.upload fails', async function () {
       const fakeEventObject = {
         on: () => {},
       };
@@ -61,7 +61,7 @@ describe('s3', () => {
       await uploadZip('/fake/file/path.zip').should.eventually.be.rejectedWith(/Could not upload/);
       uploaderStub.restore();
     });
-    it('should pass if s3.upload does not fail', async () => {
+    it('should pass if s3.upload does not fail', async function () {
       const fakeEventObject = {
         on: () => {},
       };
@@ -73,7 +73,7 @@ describe('s3', () => {
       await uploadZip('/fake/file/path.zip').should.eventually.be.resolved;
       uploaderStub.restore();
     });
-    it('should not reupload if it is cached', async () => {
+    it('should not reupload if it is cached', async function () {
       const fakeEventObject = {
         on: () => {},
       };

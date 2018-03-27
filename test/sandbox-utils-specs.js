@@ -11,9 +11,9 @@ let funcs = {
   abc: () => { return 'abc'; }
 };
 
-describe('sandbox-utils', () => {
+describe('sandbox-utils', function () {
   describe('withSandbox', withSandbox({mocks: {funcs}}, (S) => {
-    it('should create a sandbox and mocks', () => {
+    it('should create a sandbox and mocks', function () {
       expect(S.sandbox).to.exist;
       expect(S.mocks.funcs).to.exist;
       funcs.abc().should.equal('abc');
@@ -22,11 +22,11 @@ describe('sandbox-utils', () => {
       S.sandbox.verify();
     });
 
-    it('should be back to normal', () => {
+    it('should be back to normal', function () {
       funcs.abc().should.equal('abc');
     });
 
-    it('S.verify', () => {
+    it('S.verify', function () {
       expect(S.sandbox).to.exist;
       expect(S.mocks.funcs).to.exist;
       S.mocks.funcs.expects('abc').once().returns('efg');
@@ -34,7 +34,7 @@ describe('sandbox-utils', () => {
       S.verify();
     });
 
-    it('verify', () => {
+    it('verify', function () {
       expect(S.sandbox).to.exist;
       expect(S.mocks.funcs).to.exist;
       S.mocks.funcs.expects('abc').once().returns('efg');
@@ -46,7 +46,7 @@ describe('sandbox-utils', () => {
   }));
 
   describe('withMocks', withMocks({funcs}, (mocks, S) => {
-    it('should create sandox and mocks', () => {
+    it('should create sandox and mocks', function () {
       expect(mocks).to.exist;
       expect(S).to.exist;
       funcs.abc().should.equal('abc');
@@ -54,7 +54,7 @@ describe('sandbox-utils', () => {
       funcs.abc().should.equal('efg');
       S.sandbox.verify();
     });
-    it('verify', () => {
+    it('verify', function () {
       expect(S.sandbox).to.exist;
       expect(S.mocks.funcs).to.exist;
       funcs.abc().should.equal('abc');

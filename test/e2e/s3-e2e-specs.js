@@ -14,10 +14,10 @@ const {writeFile, mkdir} = fs;
 chai.should();
 chai.use(chaiAsPromised);
 
-describe('S3', () => {
+describe('S3', function () {
   let tempDir, testDir, zipPath, s3UploadSpy, s3Proto;
 
-  before(async () => {
+  before(async function () {
     // Create a temporary directory with one file and upload it to S3
     tempDir = await openDir('temp-e2e-test-dir');
     testDir = path.resolve(tempDir, 'test-dir');
@@ -29,7 +29,7 @@ describe('S3', () => {
     s3UploadSpy = sinon.spy(s3Proto, 'upload');
   });
 
-  after(async () => {
+  after(async function () {
     s3UploadSpy.restore();
   });
 

@@ -10,16 +10,16 @@ import chai from 'chai';
 
 chai.should();
 
-describe('log-utils', () => {
-  describe('stubLog', () => {
+describe('log-utils', function () {
+  describe('stubLog', function () {
     let sandbox;
-    beforeEach(() => {
+    beforeEach(function () {
       sandbox = sinon.sandbox.create();
     });
-    afterEach(() => {
+    afterEach(function () {
       sandbox.restore();
     });
-    it('should stub log', () => {
+    it('should stub log', function () {
       let logStub = stubLog(sandbox, log);
       log.info('Hello World!');
       log.warn(`The ${'sun'.yellow} is shining!`);
@@ -28,7 +28,7 @@ describe('log-utils', () => {
         `warn: The ${'sun'.yellow} is shining!`
       ].join('\n'));
     });
-    it('should stub log and strip colors', () => {
+    it('should stub log and strip colors', function () {
       let logStub = stubLog(sandbox, log, {stripColors: true});
       log.info('Hello World!');
       log.warn(`The ${'sun'.yellow} is shining!`);

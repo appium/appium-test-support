@@ -24,16 +24,16 @@ function doSomething () {
   });
 }
 
-describe('time-utils', () => {
-  describe('fakeTime', () => {
+describe('time-utils', function () {
+  describe('fakeTime', function () {
     let sandbox;
-    beforeEach(() => {
+    beforeEach(function () {
       sandbox = sinon.sandbox.create();
     });
-    afterEach(() => {
+    afterEach(function () {
       sandbox.restore();
     });
-    it('should fake time', async () => {
+    it('should fake time', async function () {
       let timeLord = fakeTime(sandbox);
       let p = doSomething();
       timeLord.speedup(200, 60);
