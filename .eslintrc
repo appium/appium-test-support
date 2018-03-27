@@ -1,4 +1,3 @@
 {
-  "extends": "appium",
-  "rules": {"mocha/no-mocha-arrows": "error"}
+  "extends": "appium"
 }
