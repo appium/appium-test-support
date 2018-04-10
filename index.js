@@ -1,8 +1,9 @@
-import { stubEnv } from './lib/env-utils.js';
-import { stubLog } from './lib/log-utils.js';
-import { fakeTime } from './lib/time-utils.js';
-import { withSandbox, withMocks, verify } from './lib/sandox-utils.js';
-import { enableTestObject, disableTestObject } from './lib/testobject.js';
+import { stubEnv } from './lib/env-utils';
+import { stubLog } from './lib/log-utils';
+import { fakeTime } from './lib/time-utils';
+import { withMocks, verifyMocks } from './lib/mock-utils';
+import { withSandbox, verifySandbox } from './lib/sandox-utils';
+import { enableTestObject, disableTestObject } from './lib/testobject';
 
-export { stubEnv, stubLog, fakeTime, withSandbox, withMocks, verify,
-  enableTestObject, disableTestObject };
+export { stubEnv, stubLog, fakeTime, withSandbox, verifySandbox, withMocks,
+         verifyMocks, enableTestObject, disableTestObject };

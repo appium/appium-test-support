@@ -41,50 +41,50 @@ describe('s3', function () {
       fileExistsStub.restore();
       fileExistsStub.returns(false);
       const fakeEventObject = {
-        on: () => {},
+        on () {},
       };
-      uploaderStub = sinon.stub(s3Proto, 'upload', ((obj, cb) => {
+      uploaderStub = sinon.stub(s3Proto, 'upload').callsFake(function (obj, cb) {
         cb('Could not find');
         return fakeEventObject;
-      }));
+      });
       await uploadZip('/fake/file/path.zip').should.eventually.be.rejectedWith(/Could not find/);
       uploaderStub.restore();
     });
     it('should reject if s3.upload fails', async function () {
       const fakeEventObject = {
-        on: () => {},
+        on () {},
       };
-      uploaderStub = sinon.stub(s3Proto, 'upload', ((obj, cb) => {
+      uploaderStub = sinon.stub(s3Proto, 'upload').callsFake(function (obj, cb) {
         cb(new Error('some random S3 error'));
         return fakeEventObject;
-      }));
+      });
       await uploadZip('/fake/file/path.zip').should.eventually.be.rejectedWith(/Could not upload/);
       uploaderStub.restore();
     });
     it('should pass if s3.upload does not fail', async function () {
       const fakeEventObject = {
-        on: () => {},
+        on () {},
       };
-      uploaderStub = sinon.stub(s3Proto, 'upload', ((obj, cb) => {
+      uploaderStub = sinon.stub(s3Proto, 'upload').callsFake(function (obj, cb) {
         cb(null, 'Success');
         return fakeEventObject;
-      }));
+      });
       s3FileExistsStub.returns(false);
-      await uploadZip('/fake/file/path.zip').should.eventually.be.resolved;
+      await uploadZip('/fake/file/path.zip').should.eventually.not.be.rejected;
       uploaderStub.restore();
     });
     it('should not reupload if it is cached', async function () {
       const fakeEventObject = {
-        on: () => {},
+        on () {},
       };
 
       // Shouldn't matter if s3.upload fails
-      uploaderStub = sinon.stub(s3Proto, 'upload', ((obj, cb) => {
+      uploaderStub = sinon.stub(s3Proto, 'upload').callsFake(function (obj, cb) {
         cb(new Error('some random S3 error'));
         return fakeEventObject;
-      }));
+      });
       s3FileExistsStub.returns(true);
-      await uploadZip('/fake/file/path.zip').should.eventually.be.resolved;
+      await uploadZip('/fake/file/path.zip').should.eventually.not.be.rejected;
     });
   });
 });

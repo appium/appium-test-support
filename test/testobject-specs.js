@@ -18,7 +18,7 @@ describe('testobject-utils.js', function () {
   const appId = 1234;
   let uploadStub;
   beforeEach(function () {
-    uploadStub = sinon.stub(TestObject, 'uploadTestObjectApp', () => appId);
+    uploadStub = sinon.stub(TestObject, 'uploadTestObjectApp').callsFake(() => appId);
   });
 
   afterEach(function () {
@@ -54,10 +54,12 @@ describe('testobject-utils.js', function () {
     beforeEach(function () {
       process.env.TESTOBJECT_USERNAME = 'foobar';
       process.env.TESTOBJECT_API_KEY = 1234;
-      execStub = sinon.stub(teenProcess, 'exec', () => ({stdout: 1}));
-      fsStatStub = sinon.stub(fs, 'stat', () => ({
-        mtime: +(new Date()) - 2 * 24 * 60 * 60 * 1000, // Pretend app was last modified 2 days ago
-      }));
+      execStub = sinon.stub(teenProcess, 'exec').callsFake(() => ({stdout: 1}));
+      fsStatStub = sinon.stub(fs, 'stat').callsFake(function () {
+        return {
+          mtime: +(new Date()) - 2 * 24 * 60 * 60 * 1000, // Pretend app was last modified 2 days ago
+        };
+      });
     });
     afterEach(function () {
       execStub.restore();
@@ -76,13 +78,13 @@ describe('testobject-utils.js', function () {
     });
     it('should call cURL with -u and --data-binary args', async function () {
       execStub.restore(); // wrapping differently than the rest, so restore and re-wrap
-      execStub = sinon.stub(teenProcess, 'exec', (command, args) => {
+      execStub = sinon.stub(teenProcess, 'exec').callsFake(function (command, args) {
         command.should.equal('curl');
         args[1].should.equal('foobar:1234');
         args[args.length - 1].should.equal('@fakeapp.app');
         return {stdout: ''};
       });
-      await uploadTestObjectApp('fakeapp.app').should.eventually.be.resolved;
+      await uploadTestObjectApp('fakeapp.app').should.eventually.not.be.rejected;
     });
     it('should re-use appId if app was already uploaded earlier', async function () {
       TestObject._appIdCache['fakeapp.app'] = {
@@ -178,7 +180,7 @@ describe('testobject-utils.js', function () {
     });
 
     it('should be rejected if it fails to upload appiumDir zip', async function () {
-      uploadZipStub.throws('S3 Upload Error');
+      uploadZipStub.throws(new Error('S3 Upload Error'));
       fetchAppiumStub.returns('/fake/path/to/zip.zip');
       await TestObject.enableTestObject(null, '/does/not/matter').should.eventually.be.rejectedWith(/S3 Upload Error/);
     });
