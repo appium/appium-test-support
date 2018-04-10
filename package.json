@@ -40,7 +40,7 @@
     "prepublish": "gulp prepublish",
     "test": "gulp once",
     "watch": "gulp watch",
-    "e2e-test": "mocha build/test/e2e/ -t 10000000",
+    "e2e-test": "gulp transpile && mocha build/test/e2e/ -t 10000000",
     "build": "gulp transpile",
     "coverage": "gulp coveralls",
     "lint": "gulp eslint",

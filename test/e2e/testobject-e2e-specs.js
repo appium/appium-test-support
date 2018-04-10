@@ -25,7 +25,8 @@ describe('TestObject', function () {
 
   describe('#uploadTestObjectApp', function () {
     it('should upload fake app file to testObject', async function () {
-      await uploadTestObjectApp(path.resolve('test', 'fixtures', 'ContactManager.apk')).should.eventually.be.resolved;
+      await uploadTestObjectApp(path.resolve('test', 'fixtures', 'ContactManager.apk'))
+        .should.eventually.not.be.rejected;
     });
   });
 
@@ -44,7 +45,7 @@ describe('TestObject', function () {
 
       // Test that the zip was uploaded
       const location = wdObject.s3Location;
-      await request(location).should.eventually.be.resolved;
+      await request(location).should.eventually.not.be.rejected;
 
       // Test that we can do TestObject tests
       const driver = await wd.promiseChainRemote();
