@@ -86,7 +86,7 @@ describe('MyTest', withSandbox({mocks: {api}}, (S) => {
 When using mainly stubs.
 
 ```js
-import { withMocks, verify } from 'appium-test-support';
+import { withMocks } from 'appium-test-support';
 
 let api = {
   abc: () => { return 'abc'; }
@@ -96,15 +96,7 @@ describe('withMocks', withMocks({api}, (mocks) => {
   it('should mock api', () => {
     mocks.api.expects('abc').once().returns('efg');
     api.abc().should.equal('efg');
-    verify(mocks);
-  });
-}));
-
-describe('withMocks (+S)', withMocks({api}, (mocks, S) => {
-  it('should mock api (+S)', () => {
-    mocks.api.expects('abc').once().returns('efg');
-    api.abc().should.equal('efg');
-    S.verify();
+    mocks.verify();
   });
 }));
 ```
