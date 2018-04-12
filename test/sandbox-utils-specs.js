@@ -1,6 +1,6 @@
 // transpile:mocha
 
-import { withSandbox, withMocks, verify } from '..';
+import { withSandbox, verifySandbox } from '..';
 import chai from 'chai';
 
 
@@ -34,34 +34,14 @@ describe('sandbox-utils', function () {
       S.verify();
     });
 
-    it('verify', function () {
+    it('verifySandbox', function () {
       expect(S.sandbox).to.exist;
       expect(S.mocks.funcs).to.exist;
       S.mocks.funcs.expects('abc').once().returns('efg');
       funcs.abc().should.equal('efg');
-      verify(S);
+      verifySandbox(S);
     });
 
 
-  }));
-
-  describe('withMocks', withMocks({funcs}, (mocks, S) => {
-    it('should create sandox and mocks', function () {
-      expect(mocks).to.exist;
-      expect(S).to.exist;
-      funcs.abc().should.equal('abc');
-      mocks.funcs.expects('abc').once().returns('efg');
-      funcs.abc().should.equal('efg');
-      S.sandbox.verify();
-    });
-    it('verify', function () {
-      expect(S.sandbox).to.exist;
-      expect(S.mocks.funcs).to.exist;
-      funcs.abc().should.equal('abc');
-      mocks.funcs.expects('abc').once().returns('efg');
-      funcs.abc().should.equal('efg');
-      verify(mocks);
-    });
   }));
 });
-

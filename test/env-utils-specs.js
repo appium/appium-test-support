@@ -1,6 +1,6 @@
 // transpile:mocha
 
-import {stubEnv} from '..';
+import { stubEnv } from '..';
 import chai from 'chai';
 
 
@@ -20,4 +20,3 @@ describe('env-utils', function () {
     });
   });
 });
-

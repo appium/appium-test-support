@@ -45,7 +45,7 @@ describe('S3', function () {
     const location = await uploadZip(zipPath, uniqueFileName);
 
     // Check that we can download it
-    await request(location).should.eventually.be.resolved;
+    await request(location).should.eventually.not.be.rejected;
     s3Proto.upload.calledOnce.should.be.true;
 
     // Now upload it again, this time it shouldn't call s3.upload again
