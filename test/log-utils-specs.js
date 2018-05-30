@@ -14,7 +14,7 @@ describe('log-utils', function () {
   describe('stubLog', function () {
     let sandbox;
     beforeEach(function () {
-      sandbox = sinon.sandbox.create();
+      sandbox = sinon.createSandbox();
     });
     afterEach(function () {
       sandbox.restore();
@@ -39,4 +39,3 @@ describe('log-utils', function () {
     });
   });
 });
-
