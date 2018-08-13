@@ -27,8 +27,6 @@
   },
   "dependencies": {
     "appium-support": "^2.5.0",
-    "archiver": "^2.1.0",
-    "aws-sdk": "^2.46.0",
     "babel-runtime": "=5.8.24",
     "bluebird": "^3.5.1",
     "lodash": "^4.17.5",
