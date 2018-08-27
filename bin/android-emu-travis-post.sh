@@ -11,7 +11,7 @@ if [ ${START_EMU} = "1" ]; then
         echo "$pm_state" | grep -Eq "\d+\[\w+\]" && break || true
         echo "Waiting for emulator to finish services startup"
         sleep 1
-        ((seconds_elapsed++))
+        let "seconds_elapsed += 1"
     done
     if [[ $seconds_elapsed -ge 60 ]]; then
         echo "Timeout of 60 seconds reached; failed to start emulator services"
