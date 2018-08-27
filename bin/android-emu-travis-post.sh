@@ -7,7 +7,7 @@ if [ ${START_EMU} = "1" ]; then
 
     seconds_elapsed=0
     while [[ $seconds_elapsed -lt 60 ]]; do
-        pm_state=`adb shell pm get-install-location 2>&1`
+        pm_state=`adb shell pm get-install-location 2>&1 || true`
         echo "$pm_state" | grep -Eq "\d+\[\w+\]" && break
         echo "Waiting for emulator to finish services startup"
         sleep 1
