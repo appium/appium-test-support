@@ -4,5 +4,7 @@ import { fakeTime } from './lib/time-utils';
 import { withMocks, verifyMocks } from './lib/mock-utils';
 import { withSandbox, verifySandbox } from './lib/sandox-utils';
 
-export { stubEnv, stubLog, fakeTime, withSandbox, verifySandbox, withMocks,
-         verifyMocks };
+
+export {
+  stubEnv, stubLog, fakeTime, withSandbox, verifySandbox, withMocks, verifyMocks
+};
