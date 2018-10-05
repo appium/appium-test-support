@@ -1,25 +1,28 @@
 #!/bin/bash
 
-set -ev
-
 if [ ${START_EMU} = "1" ]; then
-    android-wait-for-emulator
+    # Fail fast if emulator process cannot start
+    pgrep -nf avd || exit 1
 
-    seconds_elapsed=0
-    timeout=60
-    while [[ $seconds_elapsed -lt $timeout ]]; do
-        pm_state=`adb shell pm get-install-location 2>&1 || true`
-        echo "$pm_state" | grep -Eq "\d+\[\w+\]" && break || true
-        echo "Waiting for emulator to finish services startup"
-        sleep 1
-        let "seconds_elapsed += 1"
+    # make sure the emulator is ready
+    adb wait-for-device get-serialno
+    secondsStarted=`date +%s`
+    TIMEOUT=360
+    while [[ $(( `date +%s` - $secondsStarted )) -lt $TIMEOUT ]]; do
+        processList=`adb shell ps`
+        if [[ "$processList" =~ "com.android.systemui" ]]; then
+            echo "System UI process is running. Checking IME services availability"
+            adb shell ime list && break
+        fi
+        sleep 5
+        secondsElapsed=$(( `date +%s` - $secondsStarted ))
+        secondsLeft=$(( $TIMEOUT - $secondsElapsed ))
+        echo "Waiting until emulator finishes services startup; ${secondsElapsed}s elapsed; ${secondsLeft}s left"
     done
-    if [[ $seconds_elapsed -ge $timeout ]]; then
-        echo "Timeout of $timeout seconds reached; failed to start emulator services"
-        exit 1
-    fi
+    bootDuration=$(( `date +%s` - $secondsStarted ))
+    echo "Emulator booting took ${bootDuration}s"
 
-    adb shell input keyevent 82 &
+    adb shell input keyevent 82
 fi
 
 exit 0;
