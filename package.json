@@ -37,6 +37,7 @@
     "appium-support": "^2.5.0",
     "bluebird": "^3.5.1",
     "lodash": "^4.17.5",
+    "loud-rejection": "^1.6.0",
     "sinon": "^6.0.0",
     "source-map-support": "^0.5.9"
   },
