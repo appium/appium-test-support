@@ -38,7 +38,7 @@
     "bluebird": "^3.5.1",
     "lodash": "^4.17.5",
     "loud-rejection": "^1.6.0",
-    "sinon": "^6.0.0",
+    "sinon": "^7.2.3",
     "source-map-support": "^0.5.9"
   },
   "scripts": {
@@ -49,7 +49,8 @@
     "e2e-test": "gulp transpile && mocha build/test/e2e/ -t 10000000",
     "build": "gulp transpile",
     "coverage": "gulp coveralls",
-    "lint": "gulp eslint",
+    "lint": "gulp lint",
+    "lint:fix": "gulp lint --fix",
     "mocha": "mocha",
     "precommit-msg": "echo 'Pre-commit checks...' && exit 0"
   },
@@ -64,7 +65,7 @@
     "chai": "^4.1.2",
     "colors": "^1.1.2",
     "eslint": "^5.2.0",
-    "eslint-config-appium": "^3.1.0",
+    "eslint-config-appium": "^4.0.1",
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-mocha": "^5.0.0",
     "eslint-plugin-promise": "^4.0.0",
