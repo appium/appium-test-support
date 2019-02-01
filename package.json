@@ -49,7 +49,8 @@
     "e2e-test": "gulp transpile && mocha build/test/e2e/ -t 10000000",
     "build": "gulp transpile",
     "coverage": "gulp coveralls",
-    "lint": "gulp eslint",
+    "lint": "gulp lint",
+    "lint:fix": "gulp lint --fix",
     "mocha": "mocha",
     "precommit-msg": "echo 'Pre-commit checks...' && exit 0"
   },
