@@ -13,12 +13,20 @@ pgrep -nf avd || exit 1
 adb wait-for-device get-serialno
 secondsStarted=$(date +%s)
 while [[ $(( $(date +%s) - secondsStarted )) -lt $EMU_STARTUP_TIMEOUT ]]; do
-    if adb shell ps | grep -q "com.android.systemui"; then
+    pstat=$(adb shell ps)
+    if ! [[ $pstat =~ "root " ]]; then
+        # In recent APIs running `ps` without `-A` only returns
+        # processes belonging to the current user (in this case `shell`)
+        pstat=$(adb shell ps -A)
+    fi
+
+    if [[ $pstat =~ "com.android.systemui" ]]; then
         echo "System UI process is running. Checking services availability"
         if adb shell "ime list && pm get-install-location && echo PASS" | grep -q "PASS"; then
             break
         fi
     fi
+
     sleep 5
     secondsElapsed=$(( $(date +%s) - secondsStarted ))
     secondsLeft=$(( EMU_STARTUP_TIMEOUT - secondsElapsed ))
