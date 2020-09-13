@@ -4,8 +4,6 @@ appium-test-support
 A collection of test utility lib used across Appium packages.
 
 [![Build Status](https://travis-ci.org/appium/appium-test-support.svg?branch=master)](https://travis-ci.org/appium/appium-test-support)
-[![Coverage Status](https://coveralls.io/repos/appium/appium-test-support/badge.svg?branch=master&service=github)](https://coveralls.io/github/appium/appium-test-support?branch=master)
-[![Greenkeeper badge](https://badges.greenkeeper.io/appium/appium-test-support.svg)](https://greenkeeper.io/)
 
 ## Install
 
